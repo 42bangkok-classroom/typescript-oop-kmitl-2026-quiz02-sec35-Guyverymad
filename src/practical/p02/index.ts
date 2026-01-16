@@ -1,32 +1,31 @@
-import axios from "axios";
+import axios from 'axios';
 
-type Post = {
+interface Post {
   userId: number;
   id: number;
   title: string;
   body: string;
-};
+}
 
-type PostResult = {
+interface UserPost {
   id: number;
   title: string;
+}
+
+export const getPostsByUser = async (userId: number): Promise<UserPost[]> => {
+  try {
+    const { data } = await axios.get<Post[]>('https://jsonplaceholder.typicode.com/posts');
+
+    // Use filter to find matches, then map to format the output
+    return data
+      .filter((post) => post.userId === userId)
+      .map(({ id, title }) => ({
+        id,
+        title,
+      }));
+
+  } catch (error) {
+    throw error;
+  }
 };
 
-export async function getPostsByUser(
-  userId: number
-): Promise<PostResult[]> {
-  try {
-    const response = await axios.get<Post[]>(
-      "https://jsonplaceholder.typicode.com/posts"
-    );
-
-    return response.data
-      .filter((post) => post.userId === userId)
-      .map((post) => ({
-        id: post.id,
-        title: post.title,
-      }));
-  } catch (error) {
-    return [];
-  }
-}
