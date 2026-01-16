@@ -1,1 +1,32 @@
-export function getPostsByUser() {}
+import axios from "axios";
+
+type Post = {
+  userId: number;
+  id: number;
+  title: string;
+  body: string;
+};
+
+type PostResult = {
+  id: number;
+  title: string;
+};
+
+export async function getPostsByUser(
+  userId: number
+): Promise<PostResult[]> {
+  try {
+    const response = await axios.get<Post[]>(
+      "https://jsonplaceholder.typicode.com/posts"
+    );
+
+    return response.data
+      .filter((post) => post.userId === userId)
+      .map((post) => ({
+        id: post.id,
+        title: post.title,
+      }));
+  } catch (error) {
+    return [];
+  }
+}
